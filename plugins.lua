@@ -6,6 +6,14 @@ local plugins = {
     opts = {
       ensure_installed = {
         "rust-analyzer",
+        "typescript-language-server",
+        "angular-language-server",
+        "deno",
+        "eslint-lsp",
+        "eslint_d",
+        "prettier",
+        "prettierd",
+        "ts-standard",
       },
     },
   },
@@ -39,7 +47,7 @@ local plugins = {
     config = function(_, opts)
       local crates  = require('crates')
       crates.setup(opts)
-      require('cmp').setup.buffer({
+      cmp.setup.buffer({
         sources = { { name = "crates" }}
       })
       crates.show()
@@ -72,6 +80,26 @@ local plugins = {
       table.insert(M.sources, {name = "crates"})
       return M
     end,
-  }
+  },
+  {
+    "typescript-language-server/typescript-language-server",
+    ft = {"javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"},
+    dependencies = "neovim/nvim-lspconfig",
+    opts = function()
+      return require "custom.configs.tsserver"
+    end,
+    config = function(_, opts)
+      local lspconfig = require("lspconfig")
+
+      lspconfig.tsserver.setup(opts)
+
+      cmp.setup.buffer({
+        sources = { 
+          { name = "tsserver" },
+          { name = "nvim_lsp" },
+        }
+      })
+    end,
+  },
 }
 return plugins
